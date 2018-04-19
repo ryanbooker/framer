@@ -6,22 +6,18 @@ trap '
   pkill -P $$
 ' INT
 
+trap 'rm -rf /tmp/frames' EXIT
+
 # $1: filter, $2: input
 function generate() {
-  destination="frames"
-  temp="/tmp/frames"
-
-  mkdir -p "$destination"
-  mkdir -p "$temp"
+  mkdir -p "frames"
+  mkdir -p "/tmp/frames"
 
   # Generate all the frames
-  ffmpeg -loglevel quiet -i "$2" -q:v 1 "$temp/%06d.jpg"
+  ffmpeg -loglevel quiet -i "$2" -q:v 1 "/tmp/frames/%06d.jpg"
 
   # Pick from every 30
-  ls /tmp/frames/*.jpg | xargs -n30 | parallel $1 $destination {1}
-
-  # Clean up
-  rm -rf "$temp"
+  ls /tmp/frames/*.jpg | xargs -n30 | parallel $1 "frames" {1}
 }
 
 # $1: destination, $2: input
