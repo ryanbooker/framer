@@ -3,7 +3,7 @@
 # Allow killing the processes in one hit
 trap '
   trap - INT # restore default INT handler
-  kill -s INT "$$"
+  pkill -P $$
 ' INT
 
 # $1: filter, $2: input
