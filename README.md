@@ -12,7 +12,7 @@ $ ./framer.sh -f size -o jpg -i input.mov # generate jpeg frames using image siz
 $ ./framer.sh -f size -o png -i input.mov # generate ping frames using image size
 ```
 
-## Dependencies
+## Runtime Dependencies
 0. *nixish environment
 1. [ffmpeg](https://ffmpeg.org)
 2. [imagemagick](https://www.imagemagick.org)
