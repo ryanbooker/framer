@@ -16,4 +16,4 @@ $ ./framer.sh -f size -o png -i input.mov # generate ping frames using image siz
 0. *nixish environment
 1. ffmpeg
 2. imagemagick
-3. GNU Parallel
+3. [GNU Parallel](https://www.gnu.org/software/parallel/)
