@@ -2,7 +2,7 @@
 
 with pkgs;
 stdenv.mkDerivation {
-  name = "shell";
+  name = "framer";
   buildInputs = [
     bc
     ffmpeg
