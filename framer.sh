@@ -27,7 +27,7 @@ function frame() {
   ffmpeg -loglevel quiet -y -i "$2" -ss "$6" -t 1 -start_number "$start_number" -an $3 "/tmp/frames/$6/%06d.$4"
 
   # Pick a frame
-  $1 "frames" "`ls /tmp/frames/$6/*.tif`"
+  $1 "frames" "`ls /tmp/frames/$6/*.$4`"
 
   # Clean up
   rm -rf "/tmp/frames/$6"
@@ -36,7 +36,7 @@ function frame() {
 # $1: destination, $2: input
 function filter_edges() {
   # Find edges
-  parallel 'convert "{1}" -colorspace Gray -edge 2 "{1}.edge.jpg"; identify -format "%[mean]+%[standard-deviation]" "{1}.edge.jpg" | { read a; echo "$a" | bc; } | xargs printf "%s,{1}\n"' ::: $2 | sort -nr | head -n 1 | tr "," "\n" | tail -n 1 | { read f; mv "$f" "$1"; }
+  parallel 'convert "{1}" -colorspace Gray -edge 2 "{1}.edge.png"; identify -format "%[mean]+%[standard-deviation]" "{1}.edge.png" | { read a; echo "$a" | bc; } | xargs printf "%s,{1}\n"' ::: $2 | sort -nr | head -n 1 | tr "," "\n" | tail -n 1 | { read f; mv "$f" "$1"; }
 }
 
 # $1: destination, $2: input
@@ -62,7 +62,7 @@ export -f filter_edges
 export -f filter_size
 
 filter=filter_edges
-type="tif"
+type="png"
 args="-pix_fmt rgb24 -vcodec tiff"
 
 while getopts ":f:o:i:" o; do
