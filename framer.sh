@@ -61,7 +61,7 @@ export -f frame
 export -f filter_edges
 export -f filter_size
 
-fitler=filter_edges
+filter=filter_edges
 type="tif"
 args="-pix_fmt rgb24 -vcodec tiff"
 
