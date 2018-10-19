@@ -17,3 +17,16 @@ $ ./framer.sh -f size -o png -i input.mov # generate ping frames using image siz
 1. [ffmpeg](https://ffmpeg.org)
 2. [imagemagick](https://www.imagemagick.org)
 3. [GNU Parallel](https://www.gnu.org/software/parallel/)
+
+## Nix
+
+If you have the nix package manager installed, you can run everything via nix-shell and have it handle the dependencies.
+
+```
+$ nix-shell --run "./framer.sh -i input.mov"
+```
+or inside an actual `nix-shell`
+```
+$ nix-shell
+[nix-shell]$ ./framer.sh -i input.mov
+```
