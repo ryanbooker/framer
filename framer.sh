@@ -10,27 +10,27 @@ trap '
   rm -rf /tmp/frames
 ' EXIT
 
-# $1: filter, $2: input file, $3: output args, $4 output type
+# $1: filter, $2: input file, $3: output path, $4 output type, $5 output args
 function generate() {
   local duration=`ffprobe -v error -select_streams v:0 -show_entries stream=duration -of default=noprint_wrappers=1:nokey=1 $2`
   local fps=`ffprobe -v error -select_streams v:0 -show_entries stream=r_frame_rate -of default=noprint_wrappers=1:nokey=1 $2 | bc -l | xargs printf "%.0f"`
-  seq 0 $duration | parallel frame "$1" "$2" "\"$3\"" "$4" "$fps" {1}
+  seq 0 $duration | parallel frame "$1" "$2" "$3" "$4" "\"$5\"" "$fps" {1}
 }
 
-# $1: filter, $2: input file, $3: output args, $4 output type, $5 fps, $6: start
+# $1: filter, $2: input file, $3 output path, $4 output type, $5: output args, $6 fps, $7: second to detect
 function frame() {
-  mkdir -p "frames"
-  mkdir -p "/tmp/frames/$6"
+  mkdir -p "$3/frames"
+  mkdir -p "/tmp/frames/$7"
 
   # Generate all the frames for this second
-  local start_number=`echo "1+$5*$6" | bc`
-  ffmpeg -loglevel quiet -y -i "$2" -ss "$6" -t 1 -start_number "$start_number" -an $3 "/tmp/frames/$6/%06d.$4"
+  local start_number=`echo "1+$6*$7" | bc`
+  ffmpeg -loglevel quiet -y -i "$2" -ss "$7" -t 1 -start_number "$start_number" -an $5 "/tmp/frames/$7/%06d.$4"
 
   # Pick a frame
-  $1 "frames" "`ls /tmp/frames/$6/*.$4`"
+  $1 "$3/frames" "`ls /tmp/frames/$7/*.$4`"
 
   # Clean up
-  rm -rf "/tmp/frames/$6"
+  rm -rf "/tmp/frames/$7"
 }
 
 # $1: destination, $2: input
@@ -55,7 +55,7 @@ function spinner() {
   done
 }
 
-function usage() { echo "Usage: `basename $0` [-f <edges|size>] [-o <jp[e]g|p[i]ng|tif[f]>] -i <input_file>" 1>&2; exit 1; }
+function usage() { echo "Usage: `basename $0` [-f <edges|size>] [-o <output_path>] [-t <jp[e]g|p[i]ng|tif[f]>] -i <input_file>" 1>&2; exit 1; }
 
 export -f frame
 export -f filter_edges
@@ -63,9 +63,10 @@ export -f filter_size
 
 filter=filter_edges
 type="png"
+output="."
 args="-pix_fmt rgb24 -vcodec tiff"
 
-while getopts ":f:o:i:" o; do
+while getopts ":f:o:t:i:" o; do
   if [[ $OPTARG = -* ]]; then
     OPTARG=$o
     o=":"
@@ -73,6 +74,7 @@ while getopts ":f:o:i:" o; do
 
   case "$o" in
     i) input="$OPTARG";;
+    o) output="$OPTARG";;
     f)
       case "$OPTARG" in
         edge|edges)
@@ -87,7 +89,7 @@ while getopts ":f:o:i:" o; do
           ;;
       esac
       ;;
-    o)
+    t)
       case "$OPTARG" in
         jpg|jpeg)
           type="jpg"
@@ -117,6 +119,6 @@ if [ ! "$input" ]; then
   exit $E_OPTERROR
 else
   echo -en "-- Generating edge filtered frames...  "
-  generate "$filter" "$input" "$args" "$type" & spinner
+  generate "$filter" "$input" "$output" "$type" "$args" & spinner
   echo -e "\n-- Done."
 fi

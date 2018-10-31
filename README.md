@@ -4,12 +4,12 @@ Pick the best frame from every second of video, for an extremely naive definitio
 
 ```
 $ ./framer.sh
-Usage: framer.sh [-f <edges|size>] [-o <jp[e]g|p[i]ng|tif[f]>] -i <input_file>
+Usage: framer.sh [-f <edges|size>] [-o <output_path>] [-t <jp[e]g|p[i]ng|tif[f]>] -i <input_file>
 
 $ ./framer.sh -i input.mov # generate ping frames using image edges
-$ ./framer.sh -f edges -o tif -i input.mov # generate tiff frames using image edges
-$ ./framer.sh -f size -o jpg -i input.mov # generate jpeg frames using image size
-$ ./framer.sh -f size -o png -i input.mov # generate ping frames using image size
+$ ./framer.sh -f edges -t tif -i input.mov # generate tiff frames using image edges
+$ ./framer.sh -f size -t jpg -i input.mov # generate jpeg frames using image size
+$ ./framer.sh -f size -t png -i input.mov # generate ping frames using image size
 ```
 
 ## Runtime Dependencies
