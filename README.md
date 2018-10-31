@@ -20,7 +20,7 @@ $ ./framer.sh -f size -t png -i input.mov # generate ping frames using image siz
 
 ## Nix
 
-If you have the nix package manager installed, you can run everything via nix-shell and have it handle the dependencies.
+If you have the nix package manager installed, you can run everything via `nix-shell` and have it handle the dependencies.
 
 ```
 $ nix-shell --run "./framer.sh -i input.mov"
