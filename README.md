@@ -18,15 +18,40 @@ $ ./framer.sh -f size -t png -i input.mov # generate ping frames using image siz
 2. [imagemagick](https://www.imagemagick.org)
 3. [GNU Parallel](https://www.gnu.org/software/parallel/)
 
-## Nix
+## Installation
 
-If you have the nix package manager installed, you can run everything via `nix-shell` and have it handle the dependencies.
+### Using the Homebrew package manager
 
-```
-$ nix-shell --run "./framer.sh -i input.mov"
-```
-or inside an actual `nix-shell`
-```
-$ nix-shell
-[nix-shell]$ ./framer.sh -i input.mov
-```
+0. Open `Terminal.app` on `macOS`, or equivalent on any other *nixish platform
+1. Install `Homebrew` by following the instructions @ https://brew.sh/
+2. In the terminal type:
+    ```
+    $ brew install ffmpeg imagemagick parallel git
+    ```
+3. Download `framer` from https://github.com/ryanbooker/Framer/archive/master.zip, and unzip it in your home folder (or wherever you want to install it)
+
+    Or in the terminal type:
+    ```
+    git clone https://github.com/ryanbooker/Framer.git ~/framer
+    ```
+4. Run `framer` as described in the first section, above. Enjoy. :)
+
+### Using the Nix package manager
+
+0. Open `Terminal.app` on `macOS`, or equivalent on any other *nixish platform
+1. Install `Nix` by following the instructions @ https://nixos.org/nix/
+3. Download `framer` from https://github.com/ryanbooker/Framer/archive/master.zip, and unzip it in your home folder (or wherever you want to install it)
+
+    Or in the terminal type:
+    ```
+    git clone https://github.com/ryanbooker/Framer.git ~/framer
+    ```
+3. Run `framer` as described in the first section, above. Either via the `nix-shell` command
+    ```
+    $ nix-shell --run "./framer.sh -i input.mov"
+    ```
+    Or inside an actual `nix-shell`
+    ```
+    $ nix-shell
+    [nix-shell]$ ./framer.sh -i input.mov
+    ```
