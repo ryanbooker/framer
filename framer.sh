@@ -12,25 +12,29 @@ trap '
 
 # $1: filter, $2: input file, $3: output path, $4 output type, $5 output args
 function generate() {
-  local duration=`ffprobe -v error -select_streams v:0 -show_entries stream=duration -of default=noprint_wrappers=1:nokey=1 $2`
-  local fps=`ffprobe -v error -select_streams v:0 -show_entries stream=r_frame_rate -of default=noprint_wrappers=1:nokey=1 $2 | bc -l | xargs printf "%.0f"`
-  seq 0 $duration | parallel frame "$1" "$2" "$3" "$4" "\"$5\"" "$fps" {1}
+  local duration=`ffprobe -v error -select_streams v:0 -show_entries stream=duration -of default=noprint_wrappers=1:nokey=1 "$2"`
+  local fps=`ffprobe -v error -select_streams v:0 -show_entries stream=r_frame_rate -of default=noprint_wrappers=1:nokey=1 "$2" | bc -l | xargs printf "%.0f"`
+  seq 0 $duration | parallel frame "$1" "\"$2\"" "\"$3\"" "$4" "\"$5\"" "$fps" {1}
 }
 
 # $1: filter, $2: input file, $3 output path, $4 output type, $5: output args, $6 fps, $7: second to detect
 function frame() {
-  mkdir -p "$3/frames"
-  mkdir -p "/tmp/frames/$7"
+  temp="/tmp/frames/$(basename "$3")/$7"
+  mkdir -p "$temp"
+
+  outdir="$3/frames"
+  mkdir -p "$outdir"
 
   # Generate all the frames for this second
   local start_number=`echo "1+$6*$7" | bc`
-  ffmpeg -loglevel quiet -y -i "$2" -ss "$7" -t 1 -start_number "$start_number" -an $5 "/tmp/frames/$7/%06d.$4"
+  ffmpeg -loglevel quiet -y -i "$2" -ss "$7" -t 1 -start_number "$start_number" -an $5 "$temp/%06d.$4"
 
   # Pick a frame
-  $1 "$3/frames" "`ls /tmp/frames/$7/*.$4`"
+  frames=$(ls "$temp"/*.$4)
+  $1 "$outdir" "$frames"
 
   # Clean up
-  rm -rf "/tmp/frames/$7"
+  rm -rf "$temp"
 }
 
 # $1: destination, $2: input
@@ -41,7 +45,7 @@ function filter_edges() {
 
 # $1: destination, $2: input
 function filter_size() {
-  stat -f %z,%N $2 | sort -nr | head -n 1 | tr "," "\n" | tail -n 1 | { read f; mv "$f" "$1"; }
+  stat -f %z,%N "$2" | sort -nr | head -n 1 | tr "," "\n" | tail -n 1 | { read f; mv "$f" "$1"; }
 }
 
 function spinner() {
