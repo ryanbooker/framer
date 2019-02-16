@@ -40,7 +40,7 @@ function frame() {
 # $1: destination, $2: input
 function filter_edges() {
   # Find edges
-  parallel 'convert {1} -colorspace Gray -edge 2 {1}.edge.png; identify -format "%[mean]+%[standard-deviation]" {1}.edge.png | { read a; echo "$a" | bc; } | xargs printf "%s,{1}\n"' ::: "$2" sort -nr | head -n 1 | tr "," "\n" | tail -n 1 | tr -d "'" | { read f; mv "$f" "$1"; }
+  parallel 'convert {1} -colorspace Gray -edge 2 {1}.edge.png; identify -format "%[mean]+%[standard-deviation]" {1}.edge.png | { read a; echo "$a" | bc; } | xargs printf "%s,{1}\n"' ::: "$2" | sort -nr | head -n 1 | tr "," "\n" | tail -n 1 | tr -d "'" | { read f; mv "$f" "$1"; }
 }
 
 # $1: destination, $2: input
