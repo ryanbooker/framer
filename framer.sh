@@ -51,7 +51,12 @@ function frame() {
 # $1: destination, $2: input
 function filter_edges() {
   # Find edges
-  # parallel 'convert {1} -colorspace Gray -edge 1 {1}.edge.png; identify -format "%[standard-deviation]" {1}.edge.png | { read a; echo "$a" | bc; } | xargs printf "%s,{1}\n"' ::: "$2" | sort -nr | head -n 1 | tr "," "\n" | tail -n 1 | tr -d "'" | { read -r f; mv "$f" "$1"; }
+  parallel 'convert {1} -colorspace Gray -edge 1 {1}.edge.png; identify -format "%[standard-deviation]" {1}.edge.png | { read a; echo "$a" | bc; } | xargs printf "%s,{1}\n"' ::: "$2" | sort -nr | head -n 1 | tr "," "\n" | tail -n 1 | tr -d "'" | { read -r f; mv "$f" "$1"; }
+}
+
+# $1: destination, $2: input
+function filter_canny() {
+  # Find edges
   parallel 'convert {1} -colorspace Gray -canny 0x1+10%+30% {1}.edge.png; identify -format "%[standard-deviation]" {1}.edge.png | { read a; echo "$a" | bc; } | xargs printf "%s,{1}\n"' ::: "$2" | sort -nr | head -n 1 | tr "," "\n" | tail -n 1 | tr -d "'" | { read -r f; mv "$f" "$1"; }
 }
 
@@ -75,9 +80,10 @@ function usage() { echo "Usage: $(basename "$0") [-f <edges|size>] [-o <output_p
 
 export -f frame
 export -f filter_edges
+export -f filter_canny
 export -f filter_size
 
-filter=filter_edges
+filter=filter_canny
 type="png"
 output="."
 args="-pix_fmt rgb24 -vcodec tiff"
@@ -94,6 +100,9 @@ while getopts ":f:o:t:i:n:" o; do
     o) output="$OPTARG";;
     f)
       case "$OPTARG" in
+        canny)
+          filter=filter_canny
+          ;;
         edge|edges)
           filter=filter_edges
           ;;
