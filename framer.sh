@@ -38,7 +38,7 @@ function frame() {
   local to
   to=$(printf '%f\n' "$(echo "$8+$7" | bc -l)")
 
-  ffmpeg -loglevel quiet -y -i "$2" -ss "$8" -to "$to" -start_number "$start_number" -an $5 "$temp/%06d.$4"
+  ffmpeg -loglevel quiet -y -i "$2" -ss "$8" -to "$to" -start_number "$start_number" -an $5 "$temp/%09d.$4"
 
   # Pick a frame
   frames=$(ls "$temp"/*."$4")
