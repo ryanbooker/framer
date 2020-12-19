@@ -20,7 +20,7 @@ function generate() {
   fps=$(ffprobe -v error -select_streams v:0 -show_entries stream=r_frame_rate -of default=noprint_wrappers=1:nokey=1 "$2" | bc -l | xargs printf "%.0f")
   step=$(printf '%f\n' "$(echo "1/$5" | bc -l)")
 
-  seq 0 "$step" "$duration" | parallel frame "$1" "\"$2\"" "\"$3\"" "$4" "\"$6\"" "$fps" "$step" "{1}"
+  seq 0 "$step" "$duration" | parallel -j $(expr $(ulimit -u) - 32) frame "$1" "\"$2\"" "\"$3\"" "$4" "\"$6\"" "$fps" "$step" "{1}"
 }
 
 # $1: filter, $2: input file, $3 output path, $4 output type, $5: output args, $6 fps, $7: step, $8: segment to detect
